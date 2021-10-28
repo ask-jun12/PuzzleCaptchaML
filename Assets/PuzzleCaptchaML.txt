@@ -1,0 +1,71 @@
+ProcessPiece.cs
+    Start()
+        PieceオブジェクトのNoを取得.
+        SetRandomScr.csから変数SelectNoを取得.
+        SetPosition.csから配列PiecePosX・Yを取得.
+        Judgeオブジェクトの取得.
+        ピースがワープする距離の設定.
+        パズルのピースを設置.
+
+
+PieceAgent.cs
+    変数
+        pieces Piecesオブジェクト
+        Target Targetオブジェクト
+        pPosX・Y float配列PiecePosX・Y
+        SPscr SetPositionスクリプト
+        rBody Rigidbody2Dコンポーネント
+
+        setrandom SetRandomオブジェクト
+        piece piece_?オブジェクト
+        SRscr SetRandomスクリプト
+        PPscr ProcessPieceスクリプト
+        component this.SpriteRendererコンポーネント
+        componentPiece piece.SpriteRendererコンポーネント
+        SelectNo int変数SelectNo
+
+        forceMultiplier 加える力の係数
+        previousDistance 前回の距離
+
+    Start() 初期化処理.
+        Rigidbody2Dコンポーネントの取得.
+        SetPosition.csから配列PiecePosX・Yを取得.
+        Targetオブジェクトの取得.
+
+    OnEpisodeBegin() エピソードの開始時に実行.
+        SetRandomScr.csから変数SelectNoを取得.
+        for(48)
+            子要素の変数PieceNoを取得.
+            if(PieceNo = SelectNo)
+                ピースを設置.
+            else
+                ピースを設置.
+        エージェントの位置と速度を初期化する.
+        位置を可動ピースの初期位置に設定.
+        Targetの位置を設定.
+        SpriteRendererのSpriteに可動ピースのSpriteを代入.
+        可動ピースのSpriteをNoneに変更.
+
+    CollectObservations() 学習の入力. 現在の状況・情報を元に, 次の行動を決定.
+        TargetとAgentの位置.
+        Agentの速度.
+
+    OnActionReceived() 行動を実行して, 報酬を割り当てる.
+        x, y軸方向に力を加える.
+        Targetとの距離を測る.
+        前回より近づいた分報酬.(? x 0.1)
+        報酬を与える.
+            Targetに到達.
+                AddReward(10)
+                EpisodeFin()
+                エピソードを終了する.
+            範囲外.
+                AddReward(-13)
+                EpisodeFin()
+                エピソードを終了する.
+
+    EpisodeFin() リセット処理.
+        可動ピースのSpriteを元に戻す.
+        SpriteRendererのSpriteをNoneに変更.
+    
+    Heuristic()

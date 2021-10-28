@@ -1,0 +1,29 @@
+{
+    "PieceCaptcha": {
+        "checkpoints": [
+            {
+                "steps": 60203,
+                "file_path": "results\\PieceCaptcha\\PieceCaptcha\\PieceCaptcha-60203.onnx",
+                "reward": 9.824029485384623,
+                "creation_time": 1634715955.7946532,
+                "auxillary_file_paths": [
+                    "results\\PieceCaptcha\\PieceCaptcha\\PieceCaptcha-60203.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 60203,
+            "file_path": "results\\PieceCaptcha\\PieceCaptcha.onnx",
+            "reward": 9.824029485384623,
+            "creation_time": 1634715955.7946532,
+            "auxillary_file_paths": [
+                "results\\PieceCaptcha\\PieceCaptcha\\PieceCaptcha-60203.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.27.0",
+        "torch_version": "1.9.0+cpu"
+    }
+}

@@ -1,0 +1,69 @@
+behaviors:
+  PieceCaptcha: # id名
+    # トレーナー種別
+    trainer_type: ppo
+
+    # 学習アルゴリズムの設定
+    hyperparameters:
+      # PPO・SAC共通
+      batch_size: 5120 # 勾配降下1回に使用する経験数
+      buffer_size: 10240(5000) # ポリシー更新前に収集する経験数(batch_sizeの倍数)
+      learning_rate: 3.0e-4 # 学習率
+      learning_rate_schedule: linear(constant) # 学習率の減衰方法
+
+      # PPO用
+      beta: 5.0e-3 # エントロピーのランダムさ
+      epsilon: 0.2 # 旧ポリシーと新ポリシーの更新比率
+      lambd: 0.95 # GAEの計算に使用する正則化パラメータ
+      num_epoch: 3 # ポリシー更新時の学習データの学習回数
+      # SAC用
+      buffer_init_steps: 0 # 学習開始前に何ステップのランダム行動を経験バッファに埋めるか
+      tau: 0.005 # モデル更新中のターゲットの更新の大きさ
+      save_replay_buffer: false # リプレイバッファの保存
+      init_entcoef: 1.0 # 学習開始時にエージェントがどの程度探索するか
+      reward_signal_steps_per_update: steps_per_update # ポリシー更新に対する報酬シグナルのステップ数の平均比率
+
+    # ニューラルネットワークの設定
+    network_settings:
+      vis_encoder_type: simple # エンコーダ種別
+      normalize: false # 観察を正規化するかどうか
+      hidden_units: 128 # 隠れ層のニューロン数
+      num_layers: 2 # 隠れ層の数
+      conditioning_type: hyper # ポリシーの条件付け種別
+
+    # 報酬の設定
+    reward_signals:
+      # 環境報酬
+      extrinsic:
+        strength: 1.0 # 環境報酬を乗算して, 他の報酬とバランス調整
+        gamma: 0.99 # 将来の報酬割引率
+      (# Curiosity報酬
+      curiosity:
+        strength: 1.0 # Curiosity報酬
+        gamma: 0.99 # 将来の報酬割引率
+        network_settings: # Curiosityモデルのニューラルネットワークの設定
+        learning_rate: 3e-4 # Curiosityモデルの学習率
+      # GAIL報酬
+      gail:
+        strength: 1.0 # GAIL報酬
+        gamma: 0.99 # 将来の報酬割引率
+        demo_path: # demoファイルのパス
+        network_settings: # GAILモデルのニューラルネットワークの設定
+        learning_rate: 3e-4 # GAILモデルの学習率
+        use_actions: false # Determineが観察と行動の両方と、観察のみの、どちらに基づいて区別するか
+        use_vail: false # Determineのvariational bottleneckの有効・無効
+      # RND報酬
+      rnd:
+        strength: 1.0 # RNDモジュールによって生成されるCuriosity報酬
+        gamma: 0.99 # 将来の報酬割引率
+        network_settings: # RNDモジュールのニューラルネットワークの設定
+        learning_rate: 3e-4 # RNDモジュールの学習率)
+
+    # 基本設定
+    max_steps: 500000 # 最大ステップ数
+    time_horizon: 64 # 経験バッファに追加する前に, エージェント毎に収集する経験の数
+    summary_freq: 5000 # 統計情報を何ステップ毎に保存するか
+    checkpoint_interval: 500000 # チェックポイントを何経験毎に保存するか
+    keep_checkpoints: 5 # 保存するチェックポイントの最大数
+    threaded: false # スレッドの有効・無効
+    init_path: None # 既存モデルで初期化して新規訓練を開始するためのパス
