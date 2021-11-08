@@ -6,25 +6,30 @@ using System.IO;
 // 座標ログをcsv出力
 public class WritePosition : MonoBehaviour
 {
-    GameObject agent;
     GameObject piece; // 可動ピース
-    PieceAgent PAscr;
+    SetPosition SPscr;
+    SetRandom SRscr;
     private Vector3 firstPos; // 可動ピースの初期位置
     private Vector3 goalPos; // 可動ピースの目標位置
+
     // シーン初め
     void Start()
     {
-        this.agent = GameObject.Find("Agent");
-        this.PAscr = agent.GetComponent<PieceAgent>();
-        this.firstPos = PAscr.firstPos;
-        int PieceNo = PAscr.SelectNo;
-        this.goalPos = new Vector3(PAscr.piecePosX[PieceNo], PAscr.piecePosY[PieceNo], 0);
-        this.piece = agent;
+        this.piece = GameObject.Find("Agent");
+
+        this.SPscr = this.GetComponent<SetPosition>();
+        this.firstPos = SPscr.firstPos;
+
+        this.SRscr = this.GetComponent<SetRandom>();
+        int PieceNo = SRscr.SelectNo;
+
+        this.goalPos = new Vector3(SPscr.piecePosX[PieceNo], SPscr.piecePosY[PieceNo], 0);
     }
 
     private float timeElapsed;
     public float timeOut; // サンプリング間隔
-    public float dis;
+    public float dis; // 始筆と終筆距離
+
     // 毎フレーム
     void Update()
     {
@@ -33,8 +38,7 @@ public class WritePosition : MonoBehaviour
         // サンプリング間隔
         if(timeElapsed >= timeOut) {
             StreamWriter swLEyeLog;
-
-            FileInfo fiLEyeLog = new FileInfo("C:/Users/jun12/Desktop/development/Unity/PuzzleCaptchaML/csv/position.csv");
+            FileInfo fiLEyeLog = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position.csv");
             swLEyeLog = fiLEyeLog.AppendText();
             swLEyeLog.Write(Time.time); swLEyeLog.Write(", ");
 
@@ -52,7 +56,7 @@ public class WritePosition : MonoBehaviour
             StreamWriter swLEyeLogMiddle; // 途中
 
             if(disFirst < dis * dis){ // 始め
-                FileInfo fiLEyeLogFirst = new FileInfo("C:/Users/jun12/Desktop/development/Unity/PuzzleCaptchaML/csv/position_first.csv");
+                FileInfo fiLEyeLogFirst = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_first.csv");
                 swLEyeLogFirst = fiLEyeLogFirst.AppendText();
                 swLEyeLogFirst.Write(Time.time); swLEyeLogFirst.Write(", ");
 
@@ -64,7 +68,7 @@ public class WritePosition : MonoBehaviour
                 swLEyeLogFirst.Close();
             }
             else if(disGoal < dis * dis){ // 終わり
-                FileInfo fiLEyeLogGoal = new FileInfo("C:/Users/jun12/Desktop/development/Unity/PuzzleCaptchaML/csv/position_goal.csv");
+                FileInfo fiLEyeLogGoal = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_goal.csv");
                 swLEyeLogGoal = fiLEyeLogGoal.AppendText();
                 swLEyeLogGoal.Write(Time.time); swLEyeLogGoal.Write(", ");
 
@@ -76,7 +80,7 @@ public class WritePosition : MonoBehaviour
                 swLEyeLogGoal.Close();
             }
             else { // 途中
-                FileInfo fiLEyeLogMiddle = new FileInfo("C:/Users/jun12/Desktop/development/Unity/PuzzleCaptchaML/csv/position_middle.csv");
+                FileInfo fiLEyeLogMiddle = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_middle.csv");
                 swLEyeLogMiddle = fiLEyeLogMiddle.AppendText();
                 swLEyeLogMiddle.Write(Time.time); swLEyeLogMiddle.Write(", ");
 

@@ -12,10 +12,10 @@ public class PieceAgent : Agent
     GameObject Target;
     Rigidbody2D rBody;
     SetPosition SPscr;
-    public float[] piecePosX = new float[48];
-    public float[] piecePosY = new float[48];
-    public Vector3 firstPos; // 可動ピースの初期位置
-    bool isFirst;
+    private float[] piecePosX = new float[48];
+    private float[] piecePosY = new float[48];
+    public Vector3 firstPos; // 可動ピースの初期位置(SPscr)
+    bool isFirst; // 1回目のエピソードかどうか
 
     // シーン初め
     void Start()
@@ -36,20 +36,18 @@ public class PieceAgent : Agent
         this.isFirst = true;
     }
 
-    GameObject setrandom;
     GameObject piece;
     SpriteRenderer component;
     SpriteRenderer componentPiece;
     SetRandom SRscr;
     ProcessPiece PPscr;
-    public int SelectNo;
+    private int SelectNo;
 
     // エピソード初め
     public override void OnEpisodeBegin()
     {
         // SetRandomScr.csから変数SelectNoを取得
-        this.setrandom = GameObject.Find("SetRandom");
-        this.SRscr = setrandom.GetComponent<SetRandom>();
+        this.SRscr = pieces.GetComponent<SetRandom>();
         this.SelectNo = SRscr.SelectNo;
 
         // piecesの子要素取得.
@@ -100,6 +98,7 @@ public class PieceAgent : Agent
 
     public float forceMultiplier = 100f; // 加える力の係数
     public float previousDistance = 0;
+
     // 行動, 報酬の受け取り
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -156,15 +155,15 @@ public class PieceAgent : Agent
         var componentNone = componentPiece.sprite;
         this.componentPiece.sprite = component.sprite;
         this.component.sprite = componentNone;
-        this.setrandom.GetComponent<SetRandom>().Start();
+        this.pieces.GetComponent<SetRandom>().Start();
 
         // 最初のエピソードのみCSV出力
         if (isFirst == true)
         {
             GameObject writeposition = GameObject.Find("Pieces");
             writeposition.GetComponent<WritePosition>().enabled = false;
+            this.isFirst = false;
         }
-        this.isFirst = false;
     }
 
     // Heuristicモード
