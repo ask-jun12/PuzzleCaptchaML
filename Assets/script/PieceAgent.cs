@@ -116,11 +116,11 @@ public class PieceAgent : Agent
         AddReward((previousDistance - nowDistance) * 0.1f);
         this.previousDistance = nowDistance;
 
-        //時間の経過とともにお叱り
+        //時間経過で減点
         AddReward(-0.01f);
 
         // ターゲットに到達したとき
-        if (nowDistance < 1f)
+        if (nowDistance < 0.5f)
         {
             // 報酬を受け取りエピソードを終了する
             AddReward(10.0f);

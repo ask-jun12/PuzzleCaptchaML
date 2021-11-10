@@ -37,62 +37,39 @@ public class WritePosition : MonoBehaviour
 
         // サンプリング間隔
         if(timeElapsed >= timeOut) {
-            StreamWriter swLEyeLog;
-            FileInfo fiLEyeLog = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position.csv");
-            swLEyeLog = fiLEyeLog.AppendText();
-            swLEyeLog.Write(Time.time); swLEyeLog.Write(", ");
-
-            swLEyeLog.Write(piece.transform.position.x); swLEyeLog.Write(", ");
-
-            swLEyeLog.WriteLine(piece.transform.position.y);
-
-            swLEyeLog.Flush();
-            swLEyeLog.Close();
-
-            StreamWriter swLEyeLogFirst; // 始め
             float disFirst = (piece.transform.position - firstPos).sqrMagnitude;
-            StreamWriter swLEyeLogGoal; // 終わり
             float disGoal = (piece.transform.position - goalPos).sqrMagnitude;
-            StreamWriter swLEyeLogMiddle; // 途中
+            // サンプリング間隔
+            if(timeElapsed >= timeOut) {
+                WriteCSV("position.csv");
 
-            if(disFirst < dis * dis){ // 始め
-                FileInfo fiLEyeLogFirst = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_first.csv");
-                swLEyeLogFirst = fiLEyeLogFirst.AppendText();
-                swLEyeLogFirst.Write(Time.time); swLEyeLogFirst.Write(", ");
+                if(disFirst < dis * dis){ // 始め
+                    WriteCSV("position_first.csv");
+                }
+                else if(disGoal < dis * dis){ // 終わり
+                    WriteCSV("position_goal.csv");
+                }
+                else { // 途中
+                    WriteCSV("position_middle.csv");
+                }
 
-                swLEyeLogFirst.Write(piece.transform.position.x); swLEyeLogFirst.Write(", ");
-
-                swLEyeLogFirst.WriteLine(piece.transform.position.y);
-
-                swLEyeLogFirst.Flush();
-                swLEyeLogFirst.Close();
+                timeElapsed = 0.0f;
             }
-            else if(disGoal < dis * dis){ // 終わり
-                FileInfo fiLEyeLogGoal = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_goal.csv");
-                swLEyeLogGoal = fiLEyeLogGoal.AppendText();
-                swLEyeLogGoal.Write(Time.time); swLEyeLogGoal.Write(", ");
-
-                swLEyeLogGoal.Write(piece.transform.position.x); swLEyeLogGoal.Write(", ");
-
-                swLEyeLogGoal.WriteLine(piece.transform.position.y);
-
-                swLEyeLogGoal.Flush();
-                swLEyeLogGoal.Close();
-            }
-            else { // 途中
-                FileInfo fiLEyeLogMiddle = new FileInfo("C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/position_middle.csv");
-                swLEyeLogMiddle = fiLEyeLogMiddle.AppendText();
-                swLEyeLogMiddle.Write(Time.time); swLEyeLogMiddle.Write(", ");
-
-                swLEyeLogMiddle.Write(piece.transform.position.x); swLEyeLogMiddle.Write(", ");
-
-                swLEyeLogMiddle.WriteLine(piece.transform.position.y);
-
-                swLEyeLogMiddle.Flush();
-                swLEyeLogMiddle.Close();
-            }
-
-            timeElapsed = 0.0f;
         }
+    }
+
+    private void WriteCSV(string fileName)
+    {
+        string dir = "C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/";
+        StreamWriter swLEyeLog; // 全体
+        FileInfo fiLEyeLog = new FileInfo(dir + fileName);
+
+        swLEyeLog = fiLEyeLog.AppendText();
+        swLEyeLog.Write(Time.time); swLEyeLog.Write(", ");
+        swLEyeLog.Write(piece.transform.position.x); swLEyeLog.Write(", ");
+        swLEyeLog.WriteLine(piece.transform.position.y);
+
+        swLEyeLog.Flush();
+        swLEyeLog.Close();
     }
 }
