@@ -1,0 +1,47 @@
+{
+    "PuzzleCaptcha": {
+        "checkpoints": [
+            {
+                "steps": 205605,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-205605.onnx",
+                "reward": 19.811102867126465,
+                "creation_time": 1639799062.9104514,
+                "auxillary_file_paths": [
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-205605.pt"
+                ]
+            },
+            {
+                "steps": 499991,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499991.onnx",
+                "reward": 12.59023666381836,
+                "creation_time": 1639800987.6613157,
+                "auxillary_file_paths": [
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499991.pt"
+                ]
+            },
+            {
+                "steps": 500021,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.onnx",
+                "reward": 12.364010674612862,
+                "creation_time": 1639800987.7243297,
+                "auxillary_file_paths": [
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500021,
+            "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha.onnx",
+            "reward": 12.364010674612862,
+            "creation_time": 1639800987.7243297,
+            "auxillary_file_paths": [
+                "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.27.0",
+        "torch_version": "1.9.0+cpu"
+    }
+}

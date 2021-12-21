@@ -5,10 +5,10 @@ using UnityEngine;
 // ピースの位置を配列に格納
 public class SetPosition : MonoBehaviour
 {
-    private Vector3 pos; //ピースのポジション用変数
     public float[] piecePosX = new float[48]; // ピースのX座標
     public float[] piecePosY = new float[48]; // ピースのY座標
-    public Vector3 firstPos = new Vector3(-4f, -3.8f, 0); // 可動ピースの初期位置
+    private Vector3 pos; //ピースのポジション用変数
+    public Vector3 startPos = new Vector3(-4f, -3.8f, 0); // 可動ピースの初期位置
     public float span; // ピースがワープする距離
     
     // シーン初め

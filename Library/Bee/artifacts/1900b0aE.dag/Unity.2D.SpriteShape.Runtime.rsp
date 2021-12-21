@@ -303,6 +303,7 @@
 -r:"C:/Program Files/Unity/Hub/Editor/2021.1.16f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2021.1.16f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2021.1.16f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll"
+-r:"C:/Program Files/Unity/Hub/Editor/2021.1.16f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2021.1.16f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll"
 -r:"C:/Users/jun12/Desktop/development/Unity/ml-agents-release_18/com.unity.ml-agents/Plugins/ProtoBuffer/Grpc.Core.dll"
 -r:"C:/Users/jun12/Desktop/development/Unity/ml-agents-release_18/com.unity.ml-agents/Plugins/ProtoBuffer/System.Interactive.Async.dll"

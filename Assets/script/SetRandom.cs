@@ -11,6 +11,6 @@ public class SetRandom : MonoBehaviour
     public void Start()
     {
         this.SelectNo = Random.Range(0, 48);
-        this.SelectNo = fixNo;
+        // this.SelectNo = fixNo;
     }
 }
