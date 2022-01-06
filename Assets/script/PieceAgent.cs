@@ -38,7 +38,7 @@ public class PieceAgent : Agent
         this.Target = GameObject.Find("Target");
 
         // WritePosition.csをオフにする
-        this.pieces.GetComponent<WritePosition>().enabled = false;
+        this.pieces.GetComponent<WriteCsv>().enabled = false;
 
         this.isFirst = true;
         this.isSecond = false;
@@ -51,10 +51,11 @@ public class PieceAgent : Agent
     ProcessPiece PPscr;
     private int SelectNo;
     private Vector3 prevPos;
+    private float prevTime;
     private float sTime;
     private float mTime;
     private float gTime;
-    private float gVel;
+    private float gVel_avg; private float gVel_std;
 
     // エピソード初め
     public override void OnEpisodeBegin()
@@ -96,13 +97,41 @@ public class PieceAgent : Agent
         this.component.sprite = componentPiece.sprite;
         this.componentPiece.sprite = componentNone;
 
+        // 前ステップの位置と時間
         this.prevPos = this.startPos;
+        this.prevTime = this.sTime;
 
+        // スタート位置とTarget位置の距離を計測
+        var dis = Mathf.Abs(Vector3.Distance(this.startPos, this.Target.transform.position));
         // 始筆・送筆・終筆の時間・速度を設定
-        this.sTime = 0.180f + Random.Range(-0.043f, 0.043f);
-        this.mTime = this.sTime + 0.713f + Random.Range(-0.039f, 0.039f);
-        this.gTime = this.mTime + 1.903f + Random.Range(-0.243f, 0.243f);
-        this.gVel = 11.720f + Random.Range(-1.470f, 1.470f);
+        if (dis <= 3.712)
+        {
+            this.sTime = 0.144f + Random.Range(-0.043f, 0.43f);
+            this.mTime = this.sTime + 0.3f + Random.Range(-0.076f, 0.076f);
+            this.gTime = this.mTime + 0.9f + Random.Range(-0.356f, 0.356f);
+            this.gVel_avg = 5.627f; this.gVel_std = 1.358f;
+        }
+        else if ((3.712 < dis) && (dis <= 6.872))
+        {
+            this.sTime = 0.18f + Random.Range(-0.078f, 0.078f);
+            this.mTime = this.sTime + 0.458f + Random.Range(-0.125f, 0.125f);
+            this.gTime = this.mTime + 1.242f + Random.Range(-0.306f, 0.306f);
+            this.gVel_avg = 9.189f; this.gVel_std = 3.026f;
+        }
+        else if ((6.872 < dis) && (dis <= 9.788))
+        {
+            this.sTime = 0.17f + Random.Range(-0.075f, 0.075f);
+            this.mTime = this.sTime + 0.544f + Random.Range(-0.145f, 0.145f);
+            this.gTime = this.mTime + 1.375f + Random.Range(-0.46f, 0.46f);
+            this.gVel_avg = 13.7f; this.gVel_std = 4.369f;
+        }
+        else if (9.788 < dis)
+        {
+            this.sTime = 0.152f + Random.Range(-0.047f, 0.047f);
+            this.mTime = this.sTime + 0.574f + Random.Range(-0.127f, 0.127f);
+            this.gTime = this.mTime + 1.698f + Random.Range(-0.428f, 0.428f);
+            this.gVel_avg = 17.928f; this.gVel_std = 3.481f;
+        }
     }
 
     // 環境情報の取得
@@ -116,110 +145,130 @@ public class PieceAgent : Agent
         sensor.AddObservation(rBody.velocity.y);
     }
 
-    private Vector3 nowPos;
+    // private Vector3 nowPos;
     public bool isDrag = false; // ドラッグ中かどうか
-    private float timeAcc = 0; // サンプリング時のtimeElapsedを累積
+    public float timeAcc = 0; // サンプリング時のtimeElapsedを累積
     public float forceMultiplier; // 加える力の係数
     private float previousDistance = 0.0f;
+    private float prevelocity = 0.0f;
 
     // 行動, 報酬の受け取り
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        this.timeAcc += (Time.deltaTime/2);
-        this.nowPos = this.transform.position; // 座標計測
+        this.timeAcc += Time.deltaTime;
         this.isDrag = true;
 
         // 行動設定
-        // x, y軸方向に力を加える
         Vector2 controlSignal = Vector2.zero;
         controlSignal.x = actionBuffers.ContinuousActions[0];
         controlSignal.y = actionBuffers.ContinuousActions[1];
-        rBody.AddForce(controlSignal * this.forceMultiplier);
+        rBody.AddForce(controlSignal * this.forceMultiplier); // x, y軸方向に力を加える
 
         // 報酬設定
-        // ターゲットとの距離・エージェントの速度を計測
+        // ターゲットとの距離を計測
         var nowDistance = Vector3.Distance(this.transform.position, Target.transform.position);
-        var dis = Mathf.Abs(Vector3.Distance(this.prevPos, this.nowPos));
-        var velocity = dis / (this.timeAcc-this.sTime);
+        // エージェントが動いた距離, エージェントの速度を計測
 
-        if (this.timeAcc <= this.sTime) // 始筆
+        // 始筆間 約10ステップ
+        if (this.timeAcc <= this.sTime)
         {
             // スタート位置との距離を計測
-            var sDis = Vector3.Distance(this.nowPos, this.startPos);
             // 始筆の時間中に移動距離が少ないほど得点
-            if (Mathf.Abs(sDis) < 0.5f)
-            {AddReward(0.01f);}
+            if (Vector3.Distance(this.transform.position, this.startPos) < 0.05f)
+            {AddReward(1.0f); Debug.Log("sarea");}
         }
-        else if ((this.sTime < this.timeAcc) && (this.timeAcc <= this.mTime)) // 送筆
+        // 送筆間 約20ステップ
+        else if ((this.sTime < this.timeAcc) && (this.timeAcc <= this.mTime))
         {
             // 前エピソードとの距離の差によってを得・減点
             AddReward((previousDistance - nowDistance) * 1.0f);
+            // エージェントが動いた距離, エージェントの速度を計測
+            var velocity = (Vector3.Distance(this.prevPos, this.transform.position)) / (this.timeAcc-this.prevTime);
             // 送筆の速度が（平均 ± 標準偏差）に近いほど得点
-            AddReward(1.0f / (40.0f + Mathf.Abs(velocity-this.gVel)));
+            if (this.timeAcc < (this.mTime - 0.1f))
+            {
+                // AddReward((prevelocity - velocity) * 0.01f);
+                AddReward(1.0f / (20.0f + Mathf.Abs(velocity-this.gVel_avg)));
+                if (Mathf.Abs(velocity-this.gVel_avg) < this.gVel_std)
+                {AddReward(0.1f); Debug.Log("debug 1");}
+            }
+            else
+            {
+                var vel = (Vector3.Distance(this.transform.position, this.startPos)) / (this.timeAcc-this.sTime);
+                if (Mathf.Abs(vel-this.gVel_avg) < this.gVel_std)
+                {AddReward(10.0f); Debug.Log("debug 2");}
+                // ゴール位置の範囲内にいれば得点
+                if (nowDistance < 0.5f)
+                {AddReward(1.0f); Debug.Log("debug 3");}
+                this.prevelocity = velocity;
+            }
         }
-        else if ((this.mTime < this.timeAcc) && (this.timeAcc <= this.gTime)) // 終筆
+        // 終筆間 約65ステップ
+        else if ((this.mTime < this.timeAcc) && (this.timeAcc <= this.gTime))
         {
-            // AddReward(0.01f);
             // 前エピソードとの距離の差によってを得・減点
-            AddReward((previousDistance - nowDistance) * 0.5f);
+            // AddReward((previousDistance - nowDistance) * 0.1f);
             // 終筆の時間中に移動距離が少ないほど得点
-            if (nowDistance < 0.2f)
-            {AddReward(0.01f);}
+            if (nowDistance < 0.05f)
+            {AddReward(0.2f); Debug.Log("garea");}
         }
+        // 終筆後 3s 経過
         else if (this.timeAcc > (this.gTime + 3.0f))
         {
             // 制限時間を超えたら減点
-            AddReward(-3.0f);
-            Debug.LogWarning("miss");
+            AddReward(-5.0f);
+            Debug.LogWarning("time out miss");
             EpisodeReset();
             EndEpisode();
         }
+        // その他
         else{
+            AddReward(-0.01f);
             // 前エピソードとの距離の差によってを得・減点
             AddReward((previousDistance - nowDistance) * 1.0f);
-        }
-
-        // ターゲットに到達すれば得点
-        if (nowDistance < this.span)
-        {
-            // 終筆の時間の 1s 以内で終了
-            if (Mathf.Abs(this.gTime-this.timeAcc) < 1.0f)
+            // ターゲットに到達すれば得点
+            if (nowDistance < this.span)
             {
-                AddReward(10.0f);
-                Debug.LogError("full success");
+                if (Mathf.Abs(this.gTime-this.timeAcc) < 0.1f)
+                {AddReward(30.0f); Debug.LogError("1st success");}
+                else if (Mathf.Abs(this.gTime-this.timeAcc) < 0.5f)
+                {AddReward(20.0f); Debug.LogError("2nd success");}
+                else if (Mathf.Abs(this.gTime-this.timeAcc) < 1.0f)
+                {AddReward(10.0f); Debug.LogError("3rd success");}
+                else{AddReward(3.0f); Debug.LogError("normal success");}
+                EpisodeReset();
+                EndEpisode();
             }
-            else{
-                AddReward(2.0f);
-                Debug.LogError("success");
-            }
-            EpisodeReset();
-            EndEpisode();
+            else{}
         }
+
         // パズルの範囲外で減点・終了
-        else if ((this.transform.position.x < -5f) || (this.transform.position.x > 5f))
+        if ((this.transform.position.x < -5f) || (this.transform.position.x > 5f))
         {
-            AddReward(-3.0f);
-            Debug.LogWarning("miss");
+            AddReward(-5.0f);
+            Debug.LogWarning("range out miss");
             EpisodeReset();
             EndEpisode();
         }
-        else if ((this.transform.position.y < -4f) || (this.transform.position.y > 4f))
+        else if ((this.transform.position.y < -4f) || (this.transform.position.y > 5f))
         {
-            AddReward(-3.0f);
-            Debug.LogWarning("miss");
+            AddReward(-5.0f);
+            Debug.LogWarning("range out miss");
             EpisodeReset();
             EndEpisode();
         }
 
+        // 前ステップ用変数に保存
         this.previousDistance = nowDistance;
-        this.prevPos = this.nowPos;
+        this.prevPos = this.transform.position;
+        this.prevTime = this.timeAcc;
     }
 
     // エピソード終わり
     public void EpisodeReset()
     {
-        this.timeAcc = 0;
         this.isDrag = false;
+        this.timeAcc = 0;
         // 可動ピースのSpriteを元に戻す
         // SpriteRendererのSpriteをNoneに変更.
         var componentNone = componentPiece.sprite;
@@ -232,12 +281,12 @@ public class PieceAgent : Agent
         {
             this.isFirst = false;
             this.isSecond = true;
-            this.pieces.GetComponent<WritePosition>().enabled = true;
+            this.pieces.GetComponent<WriteCsv>().enabled = true;
         }
         // 2回目のエピソードの場合のみCSV出力する
         else if (this.isSecond == true)
         {
-            this.pieces.GetComponent<WritePosition>().enabled = false;
+            this.pieces.GetComponent<WriteCsv>().enabled = false;
             this.isSecond = false;
         }
     }

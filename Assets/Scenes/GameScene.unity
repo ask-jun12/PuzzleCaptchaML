@@ -1298,8 +1298,8 @@ GameObject:
   - component: {fileID: 647731570}
   - component: {fileID: 647731573}
   - component: {fileID: 647731571}
-  - component: {fileID: 647731572}
   - component: {fileID: 647731574}
+  - component: {fileID: 647731572}
   m_Layer: 0
   m_Name: Pieces
   m_TagString: Untagged
@@ -1490,7 +1490,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 647731569}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e808d16035c835c42925378c37b223fa, type: 3}
+  m_Script: {fileID: 11500000, guid: ada0de05585baf648a312895fdfde893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeOut: 0.01
@@ -5248,7 +5248,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 8752d62d005628041a5d3d43f2888642, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: PuzzleCaptcha
@@ -5274,7 +5274,8 @@ MonoBehaviour:
   MaxStep: 10000
   startPos: {x: 0, y: 0, z: 0}
   isDrag: 0
-  forceMultiplier: 10
+  timeAcc: 0
+  forceMultiplier: 50
 --- !u!50 &1995078711
 Rigidbody2D:
   serializedVersion: 4

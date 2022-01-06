@@ -370,7 +370,7 @@
 "Assets/script/ProcessPiece.cs"
 "Assets/script/SetPosition.cs"
 "Assets/script/SetRandom.cs"
-"Assets/script/WritePosition.cs"
+"Assets/script/WriteCsv.cs"
 -langversion:8.0
 
 /deterministic

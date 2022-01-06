@@ -2,40 +2,40 @@
     "PuzzleCaptcha": {
         "checkpoints": [
             {
-                "steps": 205605,
-                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-205605.onnx",
-                "reward": 19.811102867126465,
-                "creation_time": 1639799062.9104514,
+                "steps": 499956,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499956.onnx",
+                "reward": 63.169741320055586,
+                "creation_time": 1641457493.0052958,
                 "auxillary_file_paths": [
-                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-205605.pt"
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499956.pt"
                 ]
             },
             {
-                "steps": 499991,
-                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499991.onnx",
-                "reward": 12.59023666381836,
-                "creation_time": 1639800987.6613157,
+                "steps": 999987,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-999987.onnx",
+                "reward": 64.98257483376398,
+                "creation_time": 1641460488.9303896,
                 "auxillary_file_paths": [
-                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-499991.pt"
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-999987.pt"
                 ]
             },
             {
-                "steps": 500021,
-                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.onnx",
-                "reward": 12.364010674612862,
-                "creation_time": 1639800987.7243297,
+                "steps": 1015791,
+                "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-1015791.onnx",
+                "reward": 65.49266084035237,
+                "creation_time": 1641460590.8849304,
                 "auxillary_file_paths": [
-                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.pt"
+                    "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-1015791.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 500021,
+            "steps": 1015791,
             "file_path": "results\\PuzzleCaptcha\\PuzzleCaptcha.onnx",
-            "reward": 12.364010674612862,
-            "creation_time": 1639800987.7243297,
+            "reward": 65.49266084035237,
+            "creation_time": 1641460590.8849304,
             "auxillary_file_paths": [
-                "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-500021.pt"
+                "results\\PuzzleCaptcha\\PuzzleCaptcha\\PuzzleCaptcha-1015791.pt"
             ]
         }
     },
