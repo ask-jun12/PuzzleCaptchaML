@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
@@ -10,6 +14,7 @@ using Unity.MLAgents.Actuators;
 public class PieceAgent : Agent
 {
     GameObject pieces;
+    GameObject judgeText;
     GameObject Target;
     Rigidbody2D rBody;
     SetPosition SPscr;
@@ -34,6 +39,9 @@ public class PieceAgent : Agent
         this.startPos = SPscr.startPos;
         this.span = SPscr.span;
 
+        // JudgeTextオブジェクトの取得
+        this.judgeText = GameObject.Find("JudgeText");
+
         // Targetオブジェクトの取得
         this.Target = GameObject.Find("Target");
 
@@ -55,7 +63,7 @@ public class PieceAgent : Agent
     private float sTime;
     private float mTime;
     private float gTime;
-    private float gVel_avg; private float gVel_std;
+    private float mVel_avg; private float mVel_std;
 
     // エピソード初め
     public override void OnEpisodeBegin()
@@ -70,12 +78,10 @@ public class PieceAgent : Agent
             this.PPscr = child.GetComponent<ProcessPiece>();
             // PieceNoの取得.
             int PieceNo = PPscr.PieceNo;
-            if (PieceNo == this.SelectNo)
-            {
+            if (PieceNo == this.SelectNo){
                 child.transform.position = this.startPos;
             }
-            else
-            {
+            else{
                 child.transform.position = new Vector3(this.piecePosX[PieceNo], this.piecePosY[PieceNo], 0);
             }
         }
@@ -104,33 +110,29 @@ public class PieceAgent : Agent
         // スタート位置とTarget位置の距離を計測
         var dis = Mathf.Abs(Vector3.Distance(this.startPos, this.Target.transform.position));
         // 始筆・送筆・終筆の時間・速度を設定
-        if (dis <= 3.712)
-        {
-            this.sTime = 0.144f + Random.Range(-0.043f, 0.43f);
-            this.mTime = this.sTime + 0.3f + Random.Range(-0.076f, 0.076f);
-            this.gTime = this.mTime + 0.9f + Random.Range(-0.356f, 0.356f);
-            this.gVel_avg = 5.627f; this.gVel_std = 1.358f;
+        if (dis <= 3.712){
+            this.sTime = 0.115f + Random.Range(-0.065f, 0.065f);
+            this.mTime = this.sTime + 0.361f + Random.Range(-0.178f, 0.178f);
+            this.gTime = this.mTime + 0.857f + Random.Range(-0.6f, 0.6f);
+            this.mVel_avg = 4.346f; this.mVel_std = 1.614f;
         }
-        else if ((3.712 < dis) && (dis <= 6.872))
-        {
-            this.sTime = 0.18f + Random.Range(-0.078f, 0.078f);
-            this.mTime = this.sTime + 0.458f + Random.Range(-0.125f, 0.125f);
-            this.gTime = this.mTime + 1.242f + Random.Range(-0.306f, 0.306f);
-            this.gVel_avg = 9.189f; this.gVel_std = 3.026f;
+        else if ((3.712 < dis) && (dis <= 6.872)){
+            this.sTime = 0.119f + Random.Range(-0.068f, 0.068f);
+            this.mTime = this.sTime + 0.543f + Random.Range(-0.173f, 0.173f);
+            this.gTime = this.mTime + 0.895f + Random.Range(-0.282f, 0.282f);
+            this.mVel_avg = 9.371f; this.mVel_std = 2.602f;
         }
-        else if ((6.872 < dis) && (dis <= 9.788))
-        {
-            this.sTime = 0.17f + Random.Range(-0.075f, 0.075f);
-            this.mTime = this.sTime + 0.544f + Random.Range(-0.145f, 0.145f);
-            this.gTime = this.mTime + 1.375f + Random.Range(-0.46f, 0.46f);
-            this.gVel_avg = 13.7f; this.gVel_std = 4.369f;
+        else if ((6.872 < dis) && (dis <= 9.788)){
+            this.sTime = 0.163f + Random.Range(-0.141f, 0.141f);
+            this.mTime = this.sTime + 0.509f + Random.Range(-0.219f, 0.219f);
+            this.gTime = this.mTime + 1.163f + Random.Range(-0.415f, 0.415f);
+            this.mVel_avg = 14.78f; this.mVel_std = 6.227f;
         }
-        else if (9.788 < dis)
-        {
-            this.sTime = 0.152f + Random.Range(-0.047f, 0.047f);
-            this.mTime = this.sTime + 0.574f + Random.Range(-0.127f, 0.127f);
-            this.gTime = this.mTime + 1.698f + Random.Range(-0.428f, 0.428f);
-            this.gVel_avg = 17.928f; this.gVel_std = 3.481f;
+        else if (9.788 < dis){
+            this.sTime = 0.145f + Random.Range(-0.084f, 0.084f);
+            this.mTime = this.sTime + 0.63f + Random.Range(-0.156f, 0.156f);
+            this.gTime = this.mTime + 1.144f + Random.Range(-0.394f, 0.394f);
+            this.mVel_avg = 17.201f; this.mVel_std = 4.359f;
         }
     }
 
@@ -145,12 +147,10 @@ public class PieceAgent : Agent
         sensor.AddObservation(rBody.velocity.y);
     }
 
-    // private Vector3 nowPos;
     public bool isDrag = false; // ドラッグ中かどうか
     public float timeAcc = 0; // サンプリング時のtimeElapsedを累積
     public float forceMultiplier; // 加える力の係数
     private float previousDistance = 0.0f;
-    private float prevelocity = 0.0f;
 
     // 行動, 報酬の受け取り
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -167,45 +167,35 @@ public class PieceAgent : Agent
         // 報酬設定
         // ターゲットとの距離を計測
         var nowDistance = Vector3.Distance(this.transform.position, Target.transform.position);
-        // エージェントが動いた距離, エージェントの速度を計測
 
         // 始筆間 約10ステップ
-        if (this.timeAcc <= this.sTime)
-        {
+        if (this.timeAcc <= this.sTime){
             // スタート位置との距離を計測
             // 始筆の時間中に移動距離が少ないほど得点
             if (Vector3.Distance(this.transform.position, this.startPos) < 0.05f)
-            {AddReward(1.0f); Debug.Log("sarea");}
+            {AddReward(3.0f); Debug.Log("sarea");}
         }
         // 送筆間 約20ステップ
-        else if ((this.sTime < this.timeAcc) && (this.timeAcc <= this.mTime))
-        {
+        else if ((this.sTime < this.timeAcc) && (this.timeAcc <= this.mTime)){
             // 前エピソードとの距離の差によってを得・減点
             AddReward((previousDistance - nowDistance) * 1.0f);
+            // Debug.Log(previousDistance - nowDistance);
             // エージェントが動いた距離, エージェントの速度を計測
             var velocity = (Vector3.Distance(this.prevPos, this.transform.position)) / (this.timeAcc-this.prevTime);
             // 送筆の速度が（平均 ± 標準偏差）に近いほど得点
-            if (this.timeAcc < (this.mTime - 0.1f))
-            {
-                // AddReward((prevelocity - velocity) * 0.01f);
-                AddReward(1.0f / (20.0f + Mathf.Abs(velocity-this.gVel_avg)));
-                if (Mathf.Abs(velocity-this.gVel_avg) < this.gVel_std)
+            if (this.timeAcc < (this.mTime - 0.1f)){
+                AddReward(1.0f / (20.0f + Mathf.Abs(velocity-this.mVel_avg)));
+                if (Mathf.Abs(velocity-this.mVel_avg) < this.mVel_std)
                 {AddReward(0.1f); Debug.Log("debug 1");}
             }
-            else
-            {
-                var vel = (Vector3.Distance(this.transform.position, this.startPos)) / (this.timeAcc-this.sTime);
-                if (Mathf.Abs(vel-this.gVel_avg) < this.gVel_std)
-                {AddReward(10.0f); Debug.Log("debug 2");}
+            else{
                 // ゴール位置の範囲内にいれば得点
                 if (nowDistance < 0.5f)
-                {AddReward(1.0f); Debug.Log("debug 3");}
-                this.prevelocity = velocity;
+                {AddReward(1.0f); Debug.Log("debug 2");}
             }
         }
         // 終筆間 約65ステップ
-        else if ((this.mTime < this.timeAcc) && (this.timeAcc <= this.gTime))
-        {
+        else if ((this.mTime < this.timeAcc) && (this.timeAcc <= this.gTime)){
             // 前エピソードとの距離の差によってを得・減点
             // AddReward((previousDistance - nowDistance) * 0.1f);
             // 終筆の時間中に移動距離が少ないほど得点
@@ -213,11 +203,12 @@ public class PieceAgent : Agent
             {AddReward(0.2f); Debug.Log("garea");}
         }
         // 終筆後 3s 経過
-        else if (this.timeAcc > (this.gTime + 3.0f))
-        {
+        else if (this.timeAcc > (this.gTime + 3.0f)){
             // 制限時間を超えたら減点
             AddReward(-5.0f);
             Debug.LogWarning("time out miss");
+            judgeText.GetComponent<Text>().color = new Color(0f / 255f, 0f / 255f, 255f / 255f);
+            judgeText.GetComponent<Text>().text = "fail";
             EpisodeReset();
             EndEpisode();
         }
@@ -229,13 +220,26 @@ public class PieceAgent : Agent
             // ターゲットに到達すれば得点
             if (nowDistance < this.span)
             {
-                if (Mathf.Abs(this.gTime-this.timeAcc) < 0.1f)
-                {AddReward(30.0f); Debug.LogError("1st success");}
-                else if (Mathf.Abs(this.gTime-this.timeAcc) < 0.5f)
-                {AddReward(20.0f); Debug.LogError("2nd success");}
-                else if (Mathf.Abs(this.gTime-this.timeAcc) < 1.0f)
-                {AddReward(10.0f); Debug.LogError("3rd success");}
-                else{AddReward(3.0f); Debug.LogError("normal success");}
+                if (Mathf.Abs(this.gTime-this.timeAcc) < 0.1f){
+                    AddReward(30.0f); Debug.LogError("1st success");
+                    judgeText.GetComponent<Text>().color = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+                    judgeText.GetComponent<Text>().text = "success";
+                }
+                else if (Mathf.Abs(this.gTime-this.timeAcc) < 0.5f){
+                    AddReward(20.0f); Debug.LogError("2nd success");
+                    judgeText.GetComponent<Text>().color = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+                    judgeText.GetComponent<Text>().text = "success";
+                }
+                else if (Mathf.Abs(this.gTime-this.timeAcc) < 1.0f){
+                    AddReward(10.0f); Debug.LogError("3rd success");
+                    judgeText.GetComponent<Text>().color = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+                    judgeText.GetComponent<Text>().text = "success";
+                }
+                else{
+                    AddReward(3.0f); Debug.LogError("normal success");
+                    judgeText.GetComponent<Text>().color = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+                    judgeText.GetComponent<Text>().text = "success";
+                }
                 EpisodeReset();
                 EndEpisode();
             }
@@ -243,17 +247,19 @@ public class PieceAgent : Agent
         }
 
         // パズルの範囲外で減点・終了
-        if ((this.transform.position.x < -5f) || (this.transform.position.x > 5f))
-        {
+        if ((this.transform.position.x < -5f) || (this.transform.position.x > 5f)){
             AddReward(-5.0f);
             Debug.LogWarning("range out miss");
+            judgeText.GetComponent<Text>().color = new Color(0f / 255f, 0f / 255f, 255f / 255f);
+            judgeText.GetComponent<Text>().text = "fail";
             EpisodeReset();
             EndEpisode();
         }
-        else if ((this.transform.position.y < -4f) || (this.transform.position.y > 5f))
-        {
+        else if ((this.transform.position.y < -4f) || (this.transform.position.y > 5f)){
             AddReward(-5.0f);
             Debug.LogWarning("range out miss");
+            judgeText.GetComponent<Text>().color = new Color(0f / 255f, 0f / 255f, 255f / 255f);
+            judgeText.GetComponent<Text>().text = "fail";
             EpisodeReset();
             EndEpisode();
         }
@@ -265,7 +271,7 @@ public class PieceAgent : Agent
     }
 
     // エピソード終わり
-    public void EpisodeReset()
+    public async void EpisodeReset()
     {
         this.isDrag = false;
         this.timeAcc = 0;
@@ -277,18 +283,23 @@ public class PieceAgent : Agent
         this.pieces.GetComponent<SetRandom>().Start();
 
         // 1回目のエピソードではcsv出力しない
-        if (this.isFirst == true)
-        {
+        if (this.isFirst == true){
             this.isFirst = false;
             this.isSecond = true;
             this.pieces.GetComponent<WriteCsv>().enabled = true;
         }
         // 2回目のエピソードの場合のみCSV出力する
-        else if (this.isSecond == true)
-        {
+        else if (this.isSecond == true){
             this.pieces.GetComponent<WriteCsv>().enabled = false;
             this.isSecond = false;
         }
+        await DelayMethod(); // 遅延
+    }
+
+    // 遅延処理
+    private async Task DelayMethod()
+    {
+        await Task.Delay(1000);
     }
 
     // Heuristicモード

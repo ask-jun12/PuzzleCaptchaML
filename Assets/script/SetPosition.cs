@@ -8,7 +8,7 @@ public class SetPosition : MonoBehaviour
     public float[] piecePosX = new float[48]; // ピースのX座標
     public float[] piecePosY = new float[48]; // ピースのY座標
     private Vector3 pos; //ピースのポジション用変数
-    public Vector3 startPos = new Vector3(-4f, -3.8f, 0); // 可動ピースの初期位置
+    public Vector3 startPos; // 可動ピースの初期位置
     public float span; // ピースがワープする距離
     
     // シーン初め

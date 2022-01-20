@@ -13,9 +13,9 @@ public class WriteCsv : MonoBehaviour
     private Vector3 startPos; // 可動ピースの初期位置
     private Vector3 goalPos; // 可動ピースの目標位置
     private Vector3 prevPos; // 一つ前の位置
-    private string directory = "C:/Users/jun12/Desktop/kenkyu/PuzzleCaptchaML/csv/";
-    private string fileNamePos = "position.csv";
-    private string fileNameVel = "velocity.csv";
+    private string path = @"C:\Users\jun12\Desktop\kenkyu\PuzzleCaptchaML\csv\";
+    private string fileNamePos;
+    private string fileNameVel;
 
     // シーン初め
     void Start()
@@ -25,6 +25,14 @@ public class WriteCsv : MonoBehaviour
 
         this.SRscr = this.GetComponent<SetRandom>();
         int PieceNo = SRscr.SelectNo;
+        if((PieceNo / 10) == 0) {
+            this.fileNamePos = $"position_0{PieceNo}.csv";
+            this.fileNameVel = $"velocity_0{PieceNo}.csv";
+        }
+        else{
+            this.fileNamePos = $"position_{PieceNo}.csv";
+            this.fileNameVel = $"velocity_{PieceNo}.csv";
+        }
 
         this.SPscr = this.GetComponent<SetPosition>();
         this.startPos = SPscr.startPos;
@@ -58,7 +66,7 @@ public class WriteCsv : MonoBehaviour
     private void WritePos()
     {
         StreamWriter swLEyeLog;
-        FileInfo fiLEyeLog = new FileInfo(this.directory + this.fileNamePos);
+        FileInfo fiLEyeLog = new FileInfo($@"{this.path}\{this.fileNamePos}");
         swLEyeLog = fiLEyeLog.AppendText();
         swLEyeLog.Write(this.timeAcc); swLEyeLog.Write(", ");
         swLEyeLog.Write(piece.transform.position.x); swLEyeLog.Write(", ");
@@ -77,7 +85,7 @@ public class WriteCsv : MonoBehaviour
         float velocity = dis / this.timeElapsed;
 
         StreamWriter swLEyeLog;
-        FileInfo fiLEyeLog = new FileInfo(this.directory + this.fileNameVel);
+        FileInfo fiLEyeLog = new FileInfo($@"{this.path}\{this.fileNameVel}");
         swLEyeLog = fiLEyeLog.AppendText();
         swLEyeLog.Write(this.timeAcc); swLEyeLog.Write(", ");
         swLEyeLog.WriteLine(velocity);
